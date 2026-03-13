@@ -1,0 +1,249 @@
+/**
+ * MarkdownRenderer.css - Clean Markdown Styling
+ * 
+ * Inspired by gemini-chatbot's minimalist approach
+ */
+
+.markdown-content {
+  line-height: 1.7;
+  color: #1f2937;
+  font-size: 14px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Headings */
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4,
+.markdown-content h5,
+.markdown-content h6 {
+  font-weight: 700;
+  line-height: 1.3;
+  margin-top: 1.5em;
+  margin-bottom: 0.75em;
+  color: #111827;
+}
+
+.markdown-content h1 {
+  font-size: 2em;
+  border-bottom: 2px solid #e5e7eb;
+  padding-bottom: 0.3em;
+}
+
+.markdown-content h2 {
+  font-size: 1.6em;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 0.3em;
+}
+
+.markdown-content h3 {
+  font-size: 1.3em;
+}
+
+.markdown-content h4 {
+  font-size: 1.1em;
+}
+
+/* Paragraphs */
+.markdown-content p {
+  margin: 1em 0;
+  color: #374151;
+}
+
+/* Links */
+.markdown-content a {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s;
+}
+
+.markdown-content a:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+/* Lists */
+.markdown-content ul,
+.markdown-content ol {
+  margin: 1em 0;
+  padding-left: 2em;
+}
+
+.markdown-content li {
+  margin: 0.5em 0;
+  color: #374151;
+}
+
+.markdown-content ul li::marker {
+  color: #6b7280;
+}
+
+.markdown-content ol li::marker {
+  color: #6b7280;
+  font-weight: 600;
+}
+
+/* Blockquotes */
+.markdown-content blockquote {
+  margin: 1.5em 0;
+  padding: 0.75em 1.25em;
+  background: #f9fafb;
+  border-left: 4px solid #d1d5db;
+  border-radius: 0 8px 8px 0;
+  color: #4b5563;
+}
+
+.markdown-content blockquote p {
+  margin: 0.5em 0;
+}
+
+/* Inline code */
+.markdown-content code {
+  background: #f3f4f6;
+  color: #1f2937;
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', 'Monaco', 'Menlo', monospace;
+  font-size: 0.9em;
+  font-weight: 500;
+}
+
+/* Code blocks */
+.markdown-content pre {
+  background: #1e293b;
+  color: #e2e8f0;
+  padding: 1.25em;
+  border-radius: 12px;
+  overflow-x: auto;
+  margin: 1.5em 0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.markdown-content pre code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  border-radius: 0;
+  font-size: 0.9em;
+  line-height: 1.6;
+}
+
+/* Tables */
+.markdown-content table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin: 1.5em 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+
+.markdown-content thead {
+  background: #f9fafb;
+}
+
+.markdown-content th {
+  padding: 0.75em 1em;
+  text-align: left;
+  font-weight: 600;
+  color: #111827;
+  border-bottom: 2px solid #e5e7eb;
+  font-size: 13px;
+}
+
+.markdown-content td {
+  padding: 0.75em 1em;
+  border-bottom: 1px solid #e5e7eb;
+  color: #374151;
+  font-size: 13px;
+}
+
+.markdown-content tbody tr {
+  background: white;
+  transition: background 0.15s;
+}
+
+.markdown-content tbody tr:hover {
+  background: #f9fafb;
+}
+
+.markdown-content tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* Horizontal rule */
+.markdown-content hr {
+  border: none;
+  height: 1px;
+  background: #e5e7eb;
+  margin: 2em 0;
+}
+
+/* Images */
+.markdown-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  margin: 1.5em 0;
+}
+
+/* Strong and emphasis */
+.markdown-content strong {
+  font-weight: 700;
+  color: #111827;
+}
+
+.markdown-content em {
+  font-style: italic;
+  color: #4b5563;
+}
+
+/* Task lists */
+.markdown-content input[type="checkbox"] {
+  margin-right: 0.5em;
+  width: 1em;
+  height: 1em;
+  accent-color: #2563eb;
+}
+
+/* Scrollbar for code blocks */
+.markdown-content pre::-webkit-scrollbar {
+  height: 6px;
+}
+
+.markdown-content pre::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+
+.markdown-content pre::-webkit-scrollbar-thumb {
+  background: #475569;
+  border-radius: 3px;
+}
+
+.markdown-content pre::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Mobile adjustments */
+@media (max-width: 767px) {
+  .markdown-content {
+    font-size: 13px;
+  }
+  
+  .markdown-content ul,
+  .markdown-content ol {
+    padding-left: 1.5em;
+  }
+  
+  .markdown-content blockquote {
+    padding: 0.5em 1em;
+  }
+  
+  .markdown-content pre {
+    padding: 1em;
+  }
+}
