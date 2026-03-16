@@ -34,41 +34,27 @@ const DelayedSkeleton: React.FC<DelayedSkeletonProps> = ({
 
   useEffect(() => {
     let timeoutId: number;
-
     if (isLoading) {
-      // Show skeleton after delay (Requirement 18.5)
-      timeoutId = window.setTimeout(() => {
-        setShowSkeleton(true);
-      }, delay);
+      timeoutId = window.setTimeout(() => setShowSkeleton(true), delay);
     } else {
-      // Hide skeleton immediately when content is available (Requirement 18.4)
       setShowSkeleton(false);
     }
-
-    return () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-    };
+    return () => { if (timeoutId) clearTimeout(timeoutId); };
   }, [isLoading, delay]);
 
-  if (isLoading && showSkeleton) {
-    if (type === 'message') {
-      return <MessageListSkeleton count={count} />;
-    }
-    return (
-      <SkeletonLoader
-        type={type}
-        count={count}
-        className={className}
-      />
-    );
-  }
-
-  if (!isLoading && children) {
+  // Always render children when not loading
+  if (!isLoading) {
     return <>{children}</>;
   }
 
+  // While loading: show skeleton overlay after delay, otherwise show nothing
+  // (avoids flash for fast loads)
+  if (showSkeleton) {
+    if (type === 'message') return <MessageListSkeleton count={count} />;
+    return <SkeletonLoader type={type} count={count} className={className} />;
+  }
+
+  // Loading but delay not reached yet — render nothing (fast path, no flicker)
   return null;
 };
 

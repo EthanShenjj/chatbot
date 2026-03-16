@@ -7,7 +7,7 @@ import type { Message } from '@/types/message';
 import { MessageSquare } from 'lucide-react';
 
 /**
- * MessageList Component - Gemini-inspired Clean Style
+ * MessageList Component - Google AI Studio Design
  */
 export const MessageList: React.FC<MessageListProps> = ({
   messages,
@@ -36,42 +36,19 @@ export const MessageList: React.FC<MessageListProps> = ({
     : messages;
 
   if (allMessages.length === 0) {
-    return (
-      <div className="flex-1 overflow-y-auto custom-scrollbar">
-        <div className="max-w-4xl mx-auto px-8 py-12">
-          <div className="space-y-12">
-            <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">Recent conversation</h3>
-            
-            <div className="text-center py-20 border-2 border-dashed border-slate-100 rounded-3xl">
-              <div className="w-12 h-12 bg-slate-50 rounded-2xl flex items-center justify-center text-slate-300 mx-auto mb-4">
-                <MessageSquare size={24} />
-              </div>
-              <p className="text-slate-400 text-sm">No messages yet. Start a conversation below.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   return (
-    <div className="flex-1 overflow-y-auto custom-scrollbar" data-testid="message-list">
-      <div className="max-w-4xl mx-auto px-8 py-12">
-        <div className="space-y-12">
-          <h3 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">Recent conversation</h3>
-          
-          <div className="space-y-8">
-            {allMessages.map((message, index) => (
-              <MessageBubble
-                key={message.id}
-                message={message}
-                isStreaming={isStreaming && index === allMessages.length - 1}
-              />
-            ))}
-          </div>
-        </div>
-        <div ref={messagesEndRef} />
-      </div>
+    <div className="space-y-6">
+      {allMessages.map((message, index) => (
+        <MessageBubble
+          key={message.id}
+          message={message}
+          isStreaming={isStreaming && index === allMessages.length - 1}
+        />
+      ))}
+      <div ref={messagesEndRef} />
     </div>
   );
 };
@@ -80,27 +57,30 @@ export const MessageList: React.FC<MessageListProps> = ({
  */
 export const MessageListSkeleton: React.FC<{ count?: number }> = ({ count = 3 }) => {
   return (
-    <div className="flex-1 overflow-y-auto custom-scrollbar" data-testid="message-list-skeleton">
-      <div className="max-w-4xl mx-auto px-8 py-12">
-        <div className="space-y-8">
-          {Array.from({ length: count }).map((_, idx) => (
-            <div key={idx} className="flex gap-6 animate-pulse">
-              {/* Avatar skeleton */}
-              <div className="w-8 h-8 rounded-full bg-slate-100 flex-shrink-0" />
-              
-              {/* Content skeleton */}
-              <div className="flex-1 space-y-3">
-                <div className="h-4 bg-slate-100 rounded w-20" />
-                <div className="space-y-2">
-                  <div className="h-4 bg-slate-100 rounded w-full" />
-                  <div className="h-4 bg-slate-100 rounded w-5/6" />
-                  <div className="h-4 bg-slate-100 rounded w-4/6" />
-                </div>
+    <div className="space-y-6 animate-pulse">
+      {Array.from({ length: count }).map((_, idx) => (
+        <div key={idx} className={`flex ${idx % 2 === 0 ? 'justify-start' : 'justify-end'}`}>
+          {idx % 2 === 0 ? (
+            // AI message skeleton
+            <div className="flex gap-3 max-w-[80%]">
+              <div className="w-8 h-8 rounded-full bg-slate-200 flex-shrink-0" />
+              <div className="flex-1 bg-slate-100 rounded-2xl rounded-tl-sm p-5 space-y-2">
+                <div className="h-4 bg-slate-200 rounded w-full" />
+                <div className="h-4 bg-slate-200 rounded w-5/6" />
+                <div className="h-4 bg-slate-200 rounded w-4/6" />
               </div>
             </div>
-          ))}
+          ) : (
+            // User message skeleton
+            <div className="max-w-[80%]">
+              <div className="bg-slate-200 rounded-2xl rounded-tr-sm p-5 space-y-2">
+                <div className="h-4 bg-slate-300 rounded w-full" />
+                <div className="h-4 bg-slate-300 rounded w-3/4" />
+              </div>
+            </div>
+          )}
         </div>
-      </div>
+      ))}
     </div>
   );
 };

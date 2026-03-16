@@ -1,4 +1,4 @@
-import { get, post } from './apiClient';
+import { get, post, del } from './apiClient';
 import type { SessionsResponse, CreateSessionResponse, SessionMessagesResponse } from '@/types/api';
 
 /**
@@ -32,6 +32,17 @@ class SessionService {
     }
 
     return response.json();
+  }
+
+  /**
+   * Delete a session and all its messages
+   */
+  async deleteSession(sessionId: string): Promise<void> {
+    const response = await del(`/api/sessions/${sessionId}`);
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to delete session');
+    }
   }
 
   /**

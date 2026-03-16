@@ -40,14 +40,14 @@ import 'prismjs/components/prism-markdown';
  * 
  * Requirements: 7.1, 7.2, 7.3, 7.4, 7.5
  */
-export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, className = '' }) => {
+export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, className = '', isUserMessage = false }) => {
   // Apply syntax highlighting after render
   useEffect(() => {
     Prism.highlightAll();
   }, [content]);
 
   return (
-    <div className={`markdown-content ${className}`}>
+    <div className={`markdown-content ${isUserMessage ? 'user-message' : ''} ${className}`}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkMath]}
         rehypePlugins={[rehypeKatex]}
@@ -93,7 +93,6 @@ export const MarkdownRenderer: React.FC<MarkdownRendererProps> = ({ content, cla
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 hover:underline"
                 {...props}
               >
                 {children}

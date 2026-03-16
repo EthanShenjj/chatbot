@@ -23,6 +23,7 @@ interface SessionState {
   stopStreaming: () => void;
   clearError: () => void;
   clearCurrentSession: () => void;
+  deleteSession: (sessionId: string) => Promise<void>;
 }
 
 /**
@@ -45,21 +46,35 @@ export const useSessionStore = create<SessionState>((set, get) => ({
    */
   fetchSessions: async () => {
     set({ isLoadingSessions: true, error: null });
-    
+
+    const timeout = window.setTimeout(() => {
+      if (get().isLoadingSessions) {
+        set({ isLoadingSessions: false });
+      }
+    }, 15000);
+
     try {
       const response = await sessionService.getSessions();
-      
-      set({
-        sessions: response.sessions,
-        isLoadingSessions: false,
-        error: null,
-      });
+      set({ sessions: response.sessions, isLoadingSessions: false, error: null });
     } catch (error) {
-      set({
-        isLoadingSessions: false,
-        error: error instanceof Error ? error.message : 'Failed to fetch sessions',
-      });
-      throw error;
+      const errorMessage = error instanceof Error ? error.message : 'Failed to fetch sessions';
+      
+      // Don't set error state for auth errors - user will be redirected to login
+      if (!errorMessage.includes('Unauthorized')) {
+        set({
+          isLoadingSessions: false,
+          error: errorMessage,
+        });
+      } else {
+        set({ isLoadingSessions: false });
+      }
+      
+      // Don't throw for auth errors to prevent console noise
+      if (!errorMessage.includes('Unauthorized')) {
+        throw error;
+      }
+    } finally {
+      clearTimeout(timeout);
     }
   },
 
@@ -115,21 +130,25 @@ export const useSessionStore = create<SessionState>((set, get) => ({
    */
   fetchMessages: async (sessionId: string) => {
     set({ isLoadingMessages: true, error: null });
-    
+
+    // Safety timeout: never stay in loading state more than 15s
+    const timeout = window.setTimeout(() => {
+      if (get().isLoadingMessages) {
+        set({ isLoadingMessages: false, error: 'Request timed out' });
+      }
+    }, 15000);
+
     try {
       const response = await sessionService.getSessionMessages(sessionId);
-      
-      set({
-        messages: response.messages,
-        isLoadingMessages: false,
-        error: null,
-      });
+      set({ messages: response.messages, isLoadingMessages: false, error: null });
     } catch (error) {
       set({
         isLoadingMessages: false,
         error: error instanceof Error ? error.message : 'Failed to fetch messages',
       });
       throw error;
+    } finally {
+      clearTimeout(timeout);
     }
   },
 
@@ -173,16 +192,18 @@ export const useSessionStore = create<SessionState>((set, get) => ({
     }));
     
     try {
+      // Get selected model config id from model store
+      const { useModelStore } = await import('@/stores/modelStore');
+      const modelConfigId = useModelStore.getState().selectedModelId;
+
       await sseClient.streamCompletion(
         currentSessionId,
         apiMessages,
-        // onToken: accumulate tokens
         (token: string) => {
           set((state) => ({
             streamingMessage: state.streamingMessage + token,
           }));
         },
-        // onComplete: persist message and refresh
         async () => {
           const { streamingMessage } = get();
           
@@ -219,7 +240,8 @@ export const useSessionStore = create<SessionState>((set, get) => ({
             networkError: true,
             error: error.message,
           });
-        }
+        },
+        modelConfigId,
       );
     } catch (error) {
       set({
@@ -278,6 +300,18 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       currentSessionId: null,
       messages: [],
     });
+  },
+
+  /**
+   * Delete a session and remove it from the list
+   */
+  deleteSession: async (sessionId: string) => {
+    await sessionService.deleteSession(sessionId);
+    set((state) => ({
+      sessions: state.sessions.filter((s) => s.id !== sessionId),
+      currentSessionId: state.currentSessionId === sessionId ? null : state.currentSessionId,
+      messages: state.currentSessionId === sessionId ? [] : state.messages,
+    }));
   },
 }));
 

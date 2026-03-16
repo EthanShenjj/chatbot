@@ -72,6 +72,7 @@ export interface FileAttachment {
 export interface MarkdownRendererProps {
   content: string;
   className?: string;
+  isUserMessage?: boolean;
 }
 
 /**

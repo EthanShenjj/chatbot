@@ -30,7 +30,9 @@ export async function fetchWithAuth(
   
   // Handle 401 unauthorized - token might be expired
   if (response.status === 401) {
-    // Could trigger logout here if needed
+    // Import dynamically to avoid circular dependency
+    const { useAuthStore } = await import('@/stores/authStore');
+    useAuthStore.getState().logout();
     throw new Error('Unauthorized - please login again');
   }
   

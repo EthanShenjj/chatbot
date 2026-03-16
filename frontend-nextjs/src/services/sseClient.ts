@@ -23,7 +23,8 @@ export class SSEClient {
     messages: Array<{ role: string; content: string | unknown[] }>,
     onToken: (token: string) => void,
     onComplete: () => void,
-    onError: (error: Error) => void
+    onError: (error: Error) => void,
+    modelConfigId?: string | null,
   ): Promise<void> {
     // Create new abort controller for this stream
     this.abortController = new AbortController();
@@ -41,6 +42,7 @@ export class SSEClient {
           session_id: sessionId,
           messages: messages,
           stream: true,
+          ...(modelConfigId ? { model_config_id: modelConfigId } : {}),
         }),
         signal: this.abortController.signal,
       });
@@ -93,6 +95,11 @@ export class SSEClient {
               // Parse and extract token
               try {
                 const parsed: ChatCompletionChunk = JSON.parse(data);
+                // Check for error payload forwarded from backend
+                if ((parsed as any).error) {
+                  onError(new Error((parsed as any).error));
+                  return;
+                }
                 if (parsed.choices?.[0]?.delta?.content) {
                   onToken(parsed.choices[0].delta.content);
                 }
@@ -103,8 +110,9 @@ export class SSEClient {
           }
         }
         
-        // Stream ended without [DONE] - clean completion
+        // Stream ended without [DONE] — treat as complete
         reader.releaseLock();
+        onComplete();
       } finally {
         // Clean up abort handler
         this.abortController?.signal.removeEventListener('abort', abortHandler);
